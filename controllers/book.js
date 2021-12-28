@@ -71,7 +71,7 @@ booksRouter.delete('/:id', async (request, response) => {
   }
 
   user.books = user.books.filter((b) => b.toString() !== book._id.toString());
-  await user.save();
+  await User.findByIdAndUpdate(user._id.toString(), user);
 
   await book.remove();
 
