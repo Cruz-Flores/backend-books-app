@@ -5,11 +5,13 @@ const jwt = require('jsonwebtoken');
 
 booksRouter.get('/', async (request, response) => {
   const books = await Book.find({}).populate('user', { username: 1, name: 1 });
+
   response.json(books);
 });
 
 booksRouter.post('/', async (request, response) => {
   const body = request.body;
+
   const token = jwt.verify(request.token, process.env.SECRET);
 
   if (!request.token || !token.id) {
@@ -28,7 +30,9 @@ booksRouter.post('/', async (request, response) => {
   const savedBook = await book.save();
 
   user.books = user.books.concat(savedBook._id);
-  await user.save();
+
+  await User.findByIdAndUpdate(user._id.toString(), user);
+
   await savedBook.populate('user', { username: 1, name: 1 });
 
   response.json(savedBook);
